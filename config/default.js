@@ -9,19 +9,22 @@ export const deliveryMethods = [
     }
 ]
 
+let tomorrow = new Date()
+tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
+
 export const defaultDeliveryDays = [
     {
-        'label': 'Morgen',
-        'date': '2024-03-04'
+        'label': 'Tomorrow',
+        'date': tomorrow.toISOString().substring(0, 10)
     }
 ]
 
 export const defaultDeliveryOptions = [
     {
-        'label': 'Standaard',
-        'identifier': 'DHL default',
+        'label': 'Delivery to home address',
+        'identifier': 'DHL_FOR_YOU_MONDAY_FRIDAY',
         'carrier': 'DHL',
-        'description': 'Levering standaard',
+        'description': 'This is standard delivery',
         'rate': {
             'price': 4.05,
             'label': '4,05'

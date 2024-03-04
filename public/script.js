@@ -12,11 +12,14 @@ Alpine.data('app', () => ({
     selectedDeliveryOption: defaultDeliveryOptions[0].identifier,
 
     async getData() {
-        const response = await paazlService()
-        console.log(response)
-        this.deliveryDays = response
-        this.deliveryOptions = response[0].options
-        this.selectedDeliveryOption = response[0].options[0].identifier
+        try {
+            const response = await paazlService()
+            this.deliveryDays = response
+            this.deliveryOptions = response[0].options
+            this.selectedDeliveryOption = response[0].options[0].identifier
+        } catch {
+            console.log('Could not connect to Paazl')
+        }
     }
 }))
 
