@@ -4,10 +4,10 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link href="./style.css" rel="stylesheet">
-	<script src="./app.js" type="module" defer></script>
+	<script src="./script.js" type="module" defer></script>
 </head>
 
-<body x-data="app">
+<body x-data="app" x-init="getData">
 	<div class="antialiased text-gray-900 px-6">
 		<div class="max-w-xl mx-auto divide-y md:max-w-4xl">
 			<div class="py-12">
@@ -16,11 +16,10 @@
 					<div class="grid grid-cols-1 gap-6">
 						<section class="grid gap-1">
 							<span class="text-gray-700">Delivery method</span>
-							<template x-for="(deliveryMethod, index) in deliveryMethods">
+							<template x-for="deliveryMethod in deliveryMethods">
 								<div class="flex items-center" x-id="['deliveryMethodOption']">
-									<input type="radio" :id="$id('deliveryMethodOption')" :value="index"
-										name="groupDeliveryMethod" @click="selectedDeliveryMethod = deliveryMethod.type"
-										:checked="index === 0" />
+									<input type="radio" :id="$id('deliveryMethodOption')" :value="deliveryMethod.type"
+										name="groupDeliveryMethod" x-model="selectedDeliveryMethod" />
 									<label :for="$id('deliveryMethodOption')" class="pl-2"
 										x-text="deliveryMethod.label"></label>
 								</div>
@@ -29,19 +28,19 @@
 						<section x-show="selectedDeliveryMethod == 'deliver'">
 							<span class="text-gray-700">When do you want to receive it?</span>
 							<select
-								class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+								class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" x-model="selectedDeliveryDay">
 								<template x-for="(deliveryDay, index) in deliveryDays">
-									<option :value="index" x-text="deliveryDay.label"></option>
+									<option :value="deliveryDay.date" x-text="deliveryDay.label" :selected="index === 0"></option>
 								</template>
 							</select>
 						</section>
 						<section class="grid gap-1" x-show="selectedDeliveryMethod == 'deliver'">
 							<span class="text-gray-700">Delivery option</span>
-							<template x-for="(deliveryOption, index) in deliveryOptions">
-								<div class="flex items-center" x-id="['deliveryOption']">
-									<input type="radio" :id="$id('deliveryOption')" :value="index"
-										name="groupDeliveryOption" :checked="index === 0" />
-									<label :for="$id('deliveryOption')" class="pl-2"
+							<template x-for="deliveryOption in deliveryOptions" :key="deliveryOption.identifier">
+								<div class="flex items-center" x-id="['deliveryOptionOption']">
+									<input type="radio" :id="$id('deliveryOptionOption')" :value="deliveryOption.identifier"
+										name="groupDeliveryOption" x-model="selectedDeliveryOption" />
+									<label :for="$id('deliveryOptionOption')" class="pl-2"
 										x-text="deliveryOption.label"></label>
 								</div>
 							</template>
