@@ -28,20 +28,32 @@
 						<section x-show="selectedDeliveryMethod == 'deliver'">
 							<span class="text-gray-700">When do you want to receive it?</span>
 							<select
-								class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" x-model="selectedDeliveryDay" x-on:change="updateDeliveryOptions($event)">
+								class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+								x-model="selectedDeliveryDay" x-on:change="updateDeliveryOptions($event)">
 								<template x-for="(deliveryDay, index) in deliveryDays">
-									<option :value="deliveryDay.date" x-text="deliveryDay.label" :selected="index === 0"></option>
+									<option :value="deliveryDay.date" x-text="deliveryDay.label"
+										:selected="index === 0"></option>
 								</template>
 							</select>
 						</section>
 						<section class="grid gap-1" x-show="selectedDeliveryMethod == 'deliver'">
 							<span class="text-gray-700">Delivery option</span>
 							<template x-for="deliveryOption in deliveryOptions" :key="deliveryOption.identifier">
-								<div class="flex items-center" x-id="['deliveryOptionOption']">
-									<input type="radio" :id="$id('deliveryOptionOption')" :value="deliveryOption.identifier"
-										name="groupDeliveryOption" x-model="selectedDeliveryOption" />
-									<label :for="$id('deliveryOptionOption')" class="pl-2"
-										x-text="deliveryOption.label"></label>
+								<div class="flex flex-row items-center" x-id="['deliveryOptionOption']">
+									<div class="basis-2/3">
+										<input type="radio" :id="$id('deliveryOptionOption')"
+										:value="deliveryOption.identifier" name="groupDeliveryOption"
+										x-model="selectedDeliveryOption" />
+		
+										<label :for="$id('deliveryOptionOption')"
+											x-text="deliveryOption.label" class="pl-2 align-middle inline-block w-4/5"></label>
+									</div>
+									<div class="basis-1/6">
+										<span x-text="deliveryOption.rate.label"></span>
+									</div>
+									<div class="basis-1/6">
+										<span class="pl-2 text-right">DHL</span>
+									</div>
 								</div>
 							</template>
 						</section>

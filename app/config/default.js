@@ -29,7 +29,7 @@ export const defaultDeliveryOptions = [
         'description': 'This is standard delivery',
         'rate': {
             'price': 4.05,
-            'label': '4,05'
+            'label': '€ 4,05'
         }
     }
 ]

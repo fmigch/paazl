@@ -53,7 +53,7 @@ class PaazlApi
                     'description' => $shippingOption->description,
                     'rate' => array(
                         'price' => $shippingOption->rate,
-                        'label' => str_replace('.', ',', $shippingOption->rate)
+                        'label' => '€ ' . str_replace('.', ',', $shippingOption->rate)
                     )
                 );
 
