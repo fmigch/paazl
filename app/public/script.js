@@ -1,5 +1,5 @@
 import Alpine from '.././node_modules/alpinejs/dist/module.esm.js'
-import { deliveryMethods, defaultDeliveryDays, defaultDeliveryOptions } from '.././config/default.js'
+import { apiUrl, deliveryMethods, defaultDeliveryDays, defaultDeliveryOptions } from '.././config/default.js'
 import paazlService from '.././src/services/paazlService.js'
 
 Alpine.data('app', () => ({
@@ -13,7 +13,7 @@ Alpine.data('app', () => ({
 
     async getData() {
         try {
-            const response = await paazlService()
+            const response = await paazlService(apiUrl)
             this.deliveryDays = response
             this.deliveryOptions = response[0].options
             this.selectedDeliveryOption = response[0].options[0].identifier
