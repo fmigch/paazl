@@ -28,7 +28,7 @@
 						<section x-show="selectedDeliveryMethod == 'deliver'">
 							<span class="text-gray-700">When do you want to receive it?</span>
 							<select
-								class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" x-model="selectedDeliveryDay">
+								class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" x-model="selectedDeliveryDay" x-on:change="updateDeliveryOptions($event)">
 								<template x-for="(deliveryDay, index) in deliveryDays">
 									<option :value="deliveryDay.date" x-text="deliveryDay.label" :selected="index === 0"></option>
 								</template>

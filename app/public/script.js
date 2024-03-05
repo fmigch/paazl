@@ -20,6 +20,12 @@ Alpine.data('app', () => ({
         } catch {
             console.log('Could not connect to Paazl')
         }
+    },
+
+    updateDeliveryOptions(event) {
+        const index = this.deliveryDays.findIndex(item => item.date === event.target.value)
+        this.deliveryOptions = this.deliveryDays[index].options
+        this.selectedDeliveryOption = this.deliveryDays[index].options[0].identifier
     }
 }))
 
