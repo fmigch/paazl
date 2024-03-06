@@ -1,14 +1,18 @@
 <?php
 $env = parse_ini_file('.env');
-require ('PaazlApi.php');
 
-$paazl = new PaazlApi(
-  'TEST190220242',
-  $env['PAAZL_APIKEY'],
-  $env['PAAZL_APISECRET']
+require('PaazlApi.php');
+require('PaazlTransformer.php');
+
+$paazlApi = new PaazlApi(
+	'TEST190220242',
+	$env['PAAZL_APIKEY'],
+	$env['PAAZL_APISECRET']
 );
 
-$data = '{
+$paazlTransformer = new PaazlTransformer('nl');
+
+$payload = '{
         "consigneeCountryCode": "NL",
         "consigneePostalCode": "7122TM",
         "deliveryDateOptions": {
@@ -41,7 +45,7 @@ $data = '{
           "totalVolume": 1,
           "totalWeight": 1
         },
-        "token": "' . $paazl->getToken() . '",
+        "token": "' . $paazlApi->getToken() . '",
         "sortingModel": {
           "orderBy": "DATE",
           "sortOrder": "ASC"
@@ -49,13 +53,15 @@ $data = '{
     }';
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-  header('Access-Control-Allow-Origin: *');
-  header('Access-Control-Allow-Headers: *');
-  http_response_code(200);
-  return;
+	header('Access-Control-Allow-Origin: *');
+	header('Access-Control-Allow-Headers: *');
+	http_response_code(200);
+	return;
 }
 
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
-echo json_encode($paazl->getShippingOptions($data, false));
+$data = $paazlApi->getShippingOptions($payload, false);
+
+echo json_encode($paazlTransformer->getTransformedShippingOptions($data));
