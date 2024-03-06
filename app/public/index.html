@@ -42,11 +42,14 @@
 								<div class="flex flex-row items-center" x-id="['deliveryOptionOption']">
 									<div class="basis-2/3">
 										<input type="radio" :id="$id('deliveryOptionOption')"
-										:value="deliveryOption.identifier" name="groupDeliveryOption"
-										x-model="selectedDeliveryOption" />
-		
-										<label :for="$id('deliveryOptionOption')"
-											x-text="deliveryOption.label" class="pl-2 align-middle inline-block w-4/5"></label>
+											:value="deliveryOption.identifier" name="groupDeliveryOption"
+											x-model="selectedDeliveryOption" />
+										<div class="pl-2 align-middle inline-block w-4/5">
+											<label :for="$id('deliveryOptionOption')" x-text="deliveryOption.label"
+												class="inline-block"></label>
+											<span x-text="deliveryOption.description" class="inline-block text-xs"
+												x-show="selectedDeliveryOption == deliveryOption.identifier"></span>
+										</div>
 									</div>
 									<div class="basis-1/6">
 										<span x-text="deliveryOption.rate.label"></span>
