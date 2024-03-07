@@ -2,7 +2,8 @@ export const titles = {
     'title': 'Bezorging',
     'delivery_methods': 'Bezorgmethode',
     'delivery_days': 'Wanneer wil je het ontvangen?',
-    'delivery_options': 'Bezorgoptie'
+    'delivery_options': 'Bezorgoptie',
+    'collect_options': 'Afhaaloptie'
 }
 
 export const words = {
@@ -15,7 +16,7 @@ export const deliveryMethods = [
         'type': 'deliver'
     },
     {
-        'label': 'Afhalen',
+        'label': 'Ophalen',
         'type': 'collect'
     }
 ]

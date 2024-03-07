@@ -3,14 +3,19 @@ import { apiUrl } from '.././config/settings.js'
 import paazlService from '.././src/services/paazlService.js'
 import { titles, words, deliveryMethods, defaultDeliveryOptions } from '.././locale/nl.js'
 
+let deliveryDays,deliveryOptions,collectOptions  = []
+
+
 Alpine.data('app', () => ({
     titles: titles,
     deliveryMethods: deliveryMethods,
-    deliveryDays: [],
-    deliveryOptions: [],
+    deliveryDays: deliveryDays,
+    deliveryOptions: deliveryOptions,
+    collectOptions: collectOptions,
     selectedDeliveryMethod: deliveryMethods[0].type,
     selectedDeliveryDay: '',
     selectedDeliveryOption: '',
+    selectedCollectOption: '',
 
     async getData() {
         try {
@@ -38,9 +43,9 @@ Alpine.data('app', () => ({
     },
 
     updateDeliveryOptions(event) {
-        const index = this.deliveryDays.findIndex(item => item.date === event.target.value)
-        this.deliveryOptions = this.deliveryDays[index].options
-        this.selectedDeliveryOption = this.deliveryDays[index].options[0].identifier
+        const i = this.deliveryDays.findIndex(item => item.date === event.target.value)
+        this.deliveryOptions = this.deliveryDays[i].options
+        this.selectedDeliveryOption = this.deliveryDays[i].options[0].identifier
     }
 }))
 
