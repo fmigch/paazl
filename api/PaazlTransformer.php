@@ -59,9 +59,9 @@ class PaazlTransformer
 
         switch ($diffDays) {
             case 0:
-                return $this->translate['today'] ?? 'Today';
+                return ucfirst($this->translate['today']) ?? 'Today';
             case +1:
-                return $this->translate['tomorrow'] ?? 'Tomorrow';
+                return ucfirst($this->translate['tomorrow']) ?? 'Tomorrow';
             default:
                 return ucfirst($date->format('l')) . ' ' . $date->format('j') . ' ' . $date->format('F');
         }

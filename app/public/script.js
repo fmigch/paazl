@@ -1,8 +1,11 @@
 import Alpine from '.././node_modules/alpinejs/dist/module.esm.js'
 import { apiUrl, deliveryMethods, defaultDeliveryDays, defaultDeliveryOptions } from '.././config/default.js'
 import paazlService from '.././src/services/paazlService.js'
+import { titles } from '.././locale/nl.js'
 
 Alpine.data('app', () => ({
+    titles: titles,
+
     deliveryMethods: deliveryMethods,
     deliveryDays: defaultDeliveryDays,
     deliveryOptions: defaultDeliveryOptions,
