@@ -2,10 +2,12 @@
 
 class PaazlTransformer
 {
+    public $translate;
+
     public function __construct($language = 'en')
     {
         $this->translate = [];
-        if($language != 'en') $this->translate = require 'locale/' . $language . '.php';
+        if ($language != 'en') $this->translate = require 'locale/' . $language . '.php';
     }
 
     public function getTransformedShippingOptions($shippingOptions)
@@ -38,12 +40,13 @@ class PaazlTransformer
                 } else {
                     $collectedDeliveryDates[$deliveryDate->deliveryDate] = array(
                         'date' => $deliveryDate->deliveryDate,
-                        'label' => $this->getTransformedDate($deliveryDate->deliveryDate),
+                        'label' => ucfirst($this->getTransformedDate($deliveryDate->deliveryDate)),
                         'options' => array($option)
                     );
                 }
             }
         }
+
         sort($collectedDeliveryDates);
 
         return $collectedDeliveryDates;
@@ -59,11 +62,11 @@ class PaazlTransformer
 
         switch ($diffDays) {
             case 0:
-                return ucfirst($this->translate['today']) ?? 'Today';
+                return $this->translate['today'] ?? 'Today';
             case +1:
-                return ucfirst($this->translate['tomorrow']) ?? 'Tomorrow';
+                return $this->translate['tomorrow'] ?? 'Tomorrow';
             default:
-                return ucfirst($this->translate[$date->format('l')] ?? $date->format('l')) . ' ' . $date->format('j') . ' ' . $this->translate[$date->format('F')] ?? $date->format('F');
+                return ($this->translate[$date->format('l')] ?? $date->format('l')) . ' ' . $date->format('j') . ' ' . ($this->translate[$date->format('F')] ?? $date->format('F'));
         }
     }
 }

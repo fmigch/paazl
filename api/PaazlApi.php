@@ -2,6 +2,11 @@
 
 class PaazlApi
 {
+    public $url;
+    public $apiKey;
+    public $apiSecret;
+    public $reference;
+
     public function __construct($reference, $apiKey, $apiSecret, $production = true)
     {
         $this->url = 'https://api-acc.paazl.com/v1/';
