@@ -63,7 +63,7 @@ class PaazlTransformer
             case +1:
                 return ucfirst($this->translate['tomorrow']) ?? 'Tomorrow';
             default:
-                return ucfirst($date->format('l')) . ' ' . $date->format('j') . ' ' . $date->format('F');
+                return ucfirst($this->translate[$date->format('l')] ?? $date->format('l')) . ' ' . $date->format('j') . ' ' . $this->translate[$date->format('F')] ?? $date->format('F');
         }
     }
 }

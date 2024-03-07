@@ -1,18 +1,16 @@
 import Alpine from '.././node_modules/alpinejs/dist/module.esm.js'
-import { apiUrl, deliveryMethods, defaultDeliveryDays, defaultDeliveryOptions } from '.././config/default.js'
+import { apiUrl } from '.././config/settings.js'
 import paazlService from '.././src/services/paazlService.js'
-import { titles } from '.././locale/nl.js'
+import { titles, words, deliveryMethods, defaultDeliveryOptions } from '.././locale/nl.js'
 
 Alpine.data('app', () => ({
     titles: titles,
-
     deliveryMethods: deliveryMethods,
-    deliveryDays: defaultDeliveryDays,
-    deliveryOptions: defaultDeliveryOptions,
-
+    deliveryDays: [],
+    deliveryOptions: [],
     selectedDeliveryMethod: deliveryMethods[0].type,
-    selectedDeliveryDay: defaultDeliveryDays[0].date,
-    selectedDeliveryOption: defaultDeliveryOptions[0].identifier,
+    selectedDeliveryDay: '',
+    selectedDeliveryOption: '',
 
     async getData() {
         try {
@@ -22,6 +20,20 @@ Alpine.data('app', () => ({
             this.selectedDeliveryOption = response[0].options[0].identifier
         } catch {
             console.log('Could not connect to Paazl')
+
+            let tomorrow = new Date()
+            tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
+
+            this.deliveryDays = [
+                {
+                    'label': words.tomorrow[0].toUpperCase() + words.tomorrow.slice(1).toLowerCase(),
+                    'date': tomorrow.toISOString().substring(0, 10)
+                }
+            ]
+
+            this.deliveryOptions = defaultDeliveryOptions,
+            this.selectedDeliveryDay = this.deliveryDays[0].date,
+            this.selectedDeliveryOption = defaultDeliveryOptions[0].identifier
         }
     },
 
