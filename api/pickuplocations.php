@@ -1,3 +1,3 @@
 <?php
-$endpoint = 'shippingoptions';
+$endpoint = 'pickuplocations';
 require('controller.php');
