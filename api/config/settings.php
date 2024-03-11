@@ -1,16 +1,20 @@
 <?php
 
+$language = 'nl_NL';
+
+$today = new DateTime('today');
+
 $settings = '{
     "consigneeCountryCode": "NL",
     "consigneePostalCode": "7122TM",
     "currency": "EUR",
     "includeExternalDeliveryDates": false,
-    "limit": 20,
-    "locale": "nl_NL",
+    "limit": 10,
+    "locale": "' . $language . '",
     "numberOfProcessingDays": 0,
     "deliveryDateOptions": {
-      "startDate": "2024-02-21",
-      "numberOfDays": "14"
+      "startDate": "' . $today->format('Y-m-d') . '",
+      "numberOfDays": "8"
     },
     "shipmentParameters": {
       "goods": [
@@ -35,5 +39,3 @@ $settings = '{
       "sortOrder": "ASC"
     }
 }';
-
-$settings = json_decode($settings);

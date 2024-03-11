@@ -1,8 +1,9 @@
 <?php
+
 $env = parse_ini_file('.env');
 
-require('PaazlApi.php');
-require('PaazlTransformer.php');
+require('paazl/PaazlApi.php');
+require('paazl/PaazlTransformer.php');
 require('config/settings.php');
 
 // incoming payload
@@ -12,8 +13,8 @@ $payload = '{
         "shipmentParameters": {
           "goods": [
             {
-              "height": 1,
-              "length": 1,
+              "height": 4,
+              "length": 4,
               "price": 10,
               "quantity": 1,
               "volume": 1,
@@ -28,49 +29,43 @@ $payload = '{
         }
     }';
 
-// convert to object
 $payload = json_decode($payload);
-// object(stdClass)#6
 
-// load library for Paazl API request
+// load library for API request
 $paazlApi = new PaazlApi(
-    'TEST190220242',
-    $env['PAAZL_APIKEY'],
-    $env['PAAZL_APISECRET']
+	'TEST190220242',
+	$env['PAAZL_APIKEY'],
+	$env['PAAZL_APISECRET']
 );
 
-// check if token is in payload
+// load library for transformation to format needed for app
+$paazlTransformer = new PaazlTransformer($language);
+
+// add token to payload if needed
 if (!isset($payload->token)) $payload->token = $paazlApi->getToken();
 
-// Function to convert class of given object
-function convertObjectClass($array, $final_class) {
-    return unserialize(sprintf(
-        'O:%d:"%s"%s',
-        strlen($final_class),
-        $final_class,
-        strstr(serialize($array), ':')
-    ));
-}
- 
-$payload = convertObjectClass(array_merge((array) $payload, (array) $settings), 'stdClass');
-$payload = json_encode($payload);
+// merge payload and settings
+$payload = json_encode((object)array_merge((array) json_decode($settings), (array) $payload));
 
-// headers
+// set headers
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Headers: *');
-    http_response_code(200);
-    return;
+	header('Access-Control-Allow-Origin: *');
+	header('Access-Control-Allow-Headers: *');
+	http_response_code(200);
+	return;
 }
 
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
 // get data from Paazl API
-$data = $paazlApi->getShippingOptions($payload, false);
-
-// load library for transformation to format needed for app
-$paazlTransformer = new PaazlTransformer('nl');
+if($endpoint == 'pickuplocations') {
+	$data = $paazlApi->getPickupLocations($payload);
+	$data = $paazlTransformer->getTransformedPickupLocations($data);
+} else {
+	$data = $paazlApi->getShippingOptions($payload);
+  	$data = $paazlTransformer->getTransformedShippingOptions($data);
+}
 
 // transform and output
-echo json_encode($paazlTransformer->getTransformedShippingOptions($data));
+echo json_encode($data);

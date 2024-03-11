@@ -37,13 +37,14 @@ class PaazlApi
         return $auth->token;
     }
 
-    public function getShippingOptions($data, $pickuplocations = false)
+    public function getShippingOptions($data)
     {
-        $url = 'shippingoptions';
-        if ($pickuplocations)
-            $url = 'pickuplocations';
+        return $this->doRequest('shippingoptions', 'POST', $data);
+    }
 
-        return $this->doRequest($url, 'POST', $data);
+    public function getPickupLocations($data)
+    {
+        return $this->doRequest('pickuplocations', 'POST', $data);
     }
 
     public function getCheckout($reference)
@@ -55,8 +56,7 @@ class PaazlApi
     {
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
-        if ($method != 'GET')
-            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+        if ($method != 'GET') curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);

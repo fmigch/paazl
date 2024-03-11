@@ -4,16 +4,16 @@ class PaazlTransformer
 {
     public $translate;
 
-    public function __construct($language = 'en')
+    public function __construct($language = 'en_US')
     {
         $this->translate = [];
-        if ($language != 'en') $this->translate = require 'locale/' . $language . '.php';
+        if ($language != 'en_US') $this->translate = require 'locale/' . $language . '.php';
     }
 
-    public function getTransformedShippingOptions($shippingOptions)
+    public function getTransformedShippingOptions($data)
     {
         $collectedDeliveryDates = array();
-        foreach ($shippingOptions->shippingOptions as $shippingOption) {
+        foreach ($data->shippingOptions as $shippingOption) {
             foreach ($shippingOption->deliveryDates as $deliveryDate) {
                 $option = array(
                     'identifier' => $shippingOption->identifier,
@@ -50,6 +50,11 @@ class PaazlTransformer
         sort($collectedDeliveryDates);
 
         return $collectedDeliveryDates;
+    }
+
+    public function getTransformedPickupLocations($data)
+    {
+        return $data->pickupLocations;
     }
 
     public function getTransformedDate($inputDate)
