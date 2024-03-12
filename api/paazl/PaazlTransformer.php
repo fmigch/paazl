@@ -54,7 +54,37 @@ class PaazlTransformer
 
     public function getTransformedPickupLocations($data)
     {
-        return $data->pickupLocations;
+        $collectedPickupLocations = array();
+        foreach ($data->pickupLocations as $pickupLocation) {
+            $dates = array();
+
+            foreach ($pickupLocation->shippingOptions as $shippingOption) {
+                foreach ($shippingOption->deliveryDates as $deliveryDate) {
+                    $dates[$deliveryDate->deliveryDate] = array(
+                        'date' => $deliveryDate->deliveryDate,
+                        'identifier' => $shippingOption->identifier,
+                        'carrier' => $shippingOption->carrier->name,
+                        'rate' => array(
+                            'price' => $shippingOption->rate,
+                            'label' => '€ ' . str_replace('.', ',', $shippingOption->rate)
+                        )
+                    );
+                }
+            }
+
+            sort($dates);
+
+            $collectedPickupLocations[] = array(
+                'code'          => $pickupLocation->code,
+                'label'         => $pickupLocation->name,
+                'description'   => ucfirst($this->getTransformedDate($dates[0]['date']) . ' af te halen'),
+                'identifier'    => $dates[0]['identifier'],
+                'carrier'       => $this->translate[$dates[0]['carrier']] ?? $dates[0]['carrier'],
+                'rate'          => $dates[0]['rate']
+            );
+        }
+
+        return $collectedPickupLocations;
     }
 
     public function getTransformedDate($inputDate)
