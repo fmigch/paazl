@@ -13,9 +13,9 @@
 		<div class="max-w-xl mx-auto divide-y md:max-w-4xl">
 			<div class="py-12">
 				<h2 class="text-2xl font-bold" x-text="titles.title"></h2>
-				<div class="mt-8 max-w-md">
+				<div class="mt-8 max-w-md" x-show="isReady">
 					<div class="grid grid-cols-1 gap-6">
-						<section class="grid gap-1">
+						<section class="grid gap-1" x-show="isSuccess">
 							<span class="text-gray-700" x-text="titles.delivery_methods"></span>
 							<template x-for="deliveryMethod in deliveryMethods"
 								x-init="$watch('selectedDeliveryMethod', value => getPickupLocations(value))">

@@ -6,11 +6,16 @@ import { titles, words, deliveryMethods, defaultDeliveryOptions } from '.././loc
 let deliveryDays, deliveryOptions, collectOptions = []
 
 Alpine.data('app', () => ({
+	isReady: false,
+	isSuccess: true,
+	
 	titles: titles,
+
 	deliveryMethods: deliveryMethods,
 	deliveryDays: deliveryDays,
 	deliveryOptions: deliveryOptions,
 	collectOptions: collectOptions,
+
 	selectedDeliveryMethod: deliveryMethods[0].type,
 	selectedDeliveryDay: '',
 	selectedDeliveryOption: '',
@@ -22,7 +27,11 @@ Alpine.data('app', () => ({
 			this.deliveryDays = response
 			this.deliveryOptions = response[0].options
 			this.selectedDeliveryOption = response[0].options[0].identifier
+			this.isReady = true
 		} catch {
+			this.isReady = true
+			this.isSuccess = false
+
 			console.log('Could not connect to Paazl')
 
 			let tomorrow = new Date()
