@@ -3,7 +3,7 @@ export const titles = {
     'delivery_methods': 'Bezorgmethode',
     'delivery_days': 'Wanneer wil je het ontvangen?',
     'delivery_options': 'Bezorgoptie',
-    'collect_options': 'Afhaaloptie'
+    'collect_options': 'Ophaalpunt'
 }
 
 export const words = {

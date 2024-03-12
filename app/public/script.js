@@ -1,24 +1,26 @@
 import Alpine from '.././node_modules/alpinejs/dist/module.esm.js'
 import { pickupLocationsUrl, shippingOptionsUrl } from '.././config/settings.js'
 import paazlService from '.././src/services/paazlService.js'
-import { titles, words, deliveryMethods, defaultDeliveryOptions } from '.././locale/nl.js'
+import { titles, words, deliveryMethods, defaultDeliveryOptions } from '.././locale/nl_NL.js'
 
 let deliveryDays, deliveryOptions, collectOptions = []
 
 Alpine.data('app', () => ({
-	isReady: false,
-	isSuccess: true,
+	isLoading: true,
+	isLoadingCollectOptions: false,
+	hasError: false,
 	
 	titles: titles,
 
 	deliveryMethods: deliveryMethods,
 	deliveryDays: deliveryDays,
 	deliveryOptions: deliveryOptions,
-	collectOptions: collectOptions,
-
+	
 	selectedDeliveryMethod: deliveryMethods[0].type,
 	selectedDeliveryDay: '',
 	selectedDeliveryOption: '',
+
+	collectOptions: collectOptions,
 	selectedCollectOption: '',
 
 	async getShippingOptions() {
@@ -27,10 +29,10 @@ Alpine.data('app', () => ({
 			this.deliveryDays = response
 			this.deliveryOptions = response[0].options
 			this.selectedDeliveryOption = response[0].options[0].identifier
-			this.isReady = true
+			this.isLoading = false
 		} catch {
-			this.isReady = true
-			this.isSuccess = false
+			this.isLoading = false
+			this.hasError = true
 
 			console.log('Could not connect to Paazl')
 
@@ -52,9 +54,12 @@ Alpine.data('app', () => ({
 
 	async getPickupLocations() {
 		if(this.collectOptions.length == 0) {
+			this.isLoadingCollectOptions = true
 			const response = await paazlService(pickupLocationsUrl)
 			this.collectOptions = response
 			console.log(response)
+			this.selectedCollectOption = response[0].code
+			this.isLoadingCollectOptions = false
 		}
 	},
 
