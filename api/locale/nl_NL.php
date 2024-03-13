@@ -3,6 +3,7 @@
 return [
     'today' => 'vandaag',
     'tomorrow' => 'morgen',
+    'can_be_picked_up_from' => 'kan vanaf %d opgehaald worden',
     'Monday' => 'maandag',
     'Tuesday' => 'dinsdag',
     'Wednesday' => 'woensdag',

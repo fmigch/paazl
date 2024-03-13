@@ -2,9 +2,9 @@
 
 $env = parse_ini_file('.env');
 
-require('paazl/PaazlApi.php');
-require('paazl/PaazlTransformer.php');
-require('config/settings.php');
+require ('paazl/PaazlApi.php');
+require ('paazl/PaazlTransformer.php');
+require ('config/settings.php');
 
 // incoming payload
 $payload = '{
@@ -42,10 +42,18 @@ $paazlApi = new PaazlApi(
 $paazlTransformer = new PaazlTransformer($language);
 
 // add token to payload if needed
-if (!isset($payload->token)) $payload->token = $paazlApi->getToken();
+if (!isset($payload->token))
+	$payload->token = $paazlApi->getToken();
+
+// load settings
+$settings = json_decode($settings);
+
+// change sort model for pickuplocations
+if ($endpoint == 'pickuplocations')
+	$settings->sortingModel->orderBy = 'DISTANCE';
 
 // merge payload and settings
-$payload = json_encode((object)array_merge((array) json_decode($settings), (array) $payload));
+$payload = json_encode((object) array_merge((array) $settings, (array) $payload));
 
 // set headers
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -59,12 +67,12 @@ header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
 // get data from Paazl API
-if($endpoint == 'pickuplocations') {
+if ($endpoint == 'pickuplocations') {
 	$data = $paazlApi->getPickupLocations($payload);
 	$data = $paazlTransformer->getTransformedPickupLocations($data);
 } else {
 	$data = $paazlApi->getShippingOptions($payload);
-  	$data = $paazlTransformer->getTransformedShippingOptions($data);
+	$data = $paazlTransformer->getTransformedShippingOptions($data);
 }
 
 // transform and output

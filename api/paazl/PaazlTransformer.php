@@ -77,7 +77,7 @@ class PaazlTransformer
             $collectedPickupLocations[] = array(
                 'code'          => $pickupLocation->code,
                 'label'         => $pickupLocation->name,
-                'description'   => ucfirst($this->getTransformedDate($dates[0]['date']) . ' af te halen'),
+                'description'   => ucfirst(str_replace('%d', $this->getTransformedDate($dates[0]['date']), ($this->translate['can_be_picked_up_from'] ?? 'can be picked up from %d'))),
                 'identifier'    => $dates[0]['identifier'],
                 'carrier'       => $this->translate[$dates[0]['carrier']] ?? $dates[0]['carrier'],
                 'rate'          => $dates[0]['rate']
@@ -97,9 +97,9 @@ class PaazlTransformer
 
         switch ($diffDays) {
             case 0:
-                return $this->translate['today'] ?? 'Today';
+                return $this->translate['today'] ?? 'today';
             case +1:
-                return $this->translate['tomorrow'] ?? 'Tomorrow';
+                return $this->translate['tomorrow'] ?? 'tomorrow';
             default:
                 return ($this->translate[$date->format('l')] ?? $date->format('l')) . ' ' . $date->format('j') . ' ' . ($this->translate[$date->format('F')] ?? $date->format('F'));
         }
