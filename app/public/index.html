@@ -8,10 +8,33 @@
 	<script src="./script.js" type="module" defer></script>
 </head>
 
-<body x-data="app" x-init="getShippingOptions">
+<body x-data="app" x-init="refreshData()">
 	<div class="antialiased text-gray-900 px-6">
 		<div class="max-w-xl mx-auto divide-y md:max-w-4xl">
-			<div class="py-12">
+			<section id="deliveryAddress" class="py-6">
+				<h2 class="text-2xl font-bold" x-text="titles.title_address"></h2>
+				<div class="mt-4 max-w-md">
+					<div class="grid grid-cols-1 gap-4">
+						<section id="deliveryAddress-zipcode">
+							<span class="text-gray-700" x-text="titles.zipcode"></span>
+							<input name="inputZipcode"
+								class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+								x-model="selectedZipcode">
+						</section>
+						<section id="deliveryAddress-country">
+							<span class="text-gray-700" x-text="titles.country"></span>
+							<select name="inputCountry"
+								class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+								x-model="selectedCountry" x-on:change="isChanged()">
+								<template x-for="country in countries">
+									<option :value="country.code" x-text="country.label"></option>
+								</template>
+							</select>
+						</section>
+					</div>
+				</div>
+			</section>
+			<section id="deliveryModule" class="py-4">
 				<h2 class="text-2xl font-bold" x-text="titles.title"></h2>
 				<div class="mt-8 max-w-md animate-pulse" x-show="isLoading">
 					<div class="w-1/2 h-7 bg-gray-300 rounded mb-2"></div>
@@ -22,12 +45,12 @@
 					<div class="w-1/2 h-7 bg-gray-300 rounded mb-2"></div>
 					<div class="w-full h-8 bg-gray-300 rounded mb-6"></div>
 				</div>
-				<div class="mt-8 max-w-md" x-show="isLoading == false">
+				<div class="mt-4 max-w-md" x-show="isLoading == false">
 					<div class="grid grid-cols-1 gap-6">
-						<section class="grid gap-1" x-show="hasError == false">
+						<section id="deliveryModule-deliverymethod" class="grid gap-1" x-show="hasError == false">
 							<span class="text-gray-700" x-text="titles.delivery_methods"></span>
 							<template x-for="deliveryMethod in deliveryMethods"
-								x-init="$watch('selectedDeliveryMethod', value => getPickupLocations(value))">
+								x-init="$watch('selectedDeliveryMethod', value => refreshData())">
 								<div class="flex items-center" x-id="['deliveryMethodOption']">
 									<input type="radio" :id="$id('deliveryMethodOption')" :value="deliveryMethod.type"
 										name="inputDeliveryMethod" x-model="selectedDeliveryMethod" />
@@ -36,18 +59,18 @@
 								</div>
 							</template>
 						</section>
-						<section x-show="selectedDeliveryMethod == 'deliver'">
+						<section id="deliveryModule-deliverday" x-show="selectedDeliveryMethod == 'deliver'">
 							<span class="text-gray-700" x-text="titles.delivery_days"></span>
 							<select name="selectDeliveryDay"
 								class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 								x-model="selectedDeliveryDay" x-on:change="updateDeliveryOptions($event)">
-								<template x-for="(deliveryDay, i) in deliveryDays">
-									<option :value="deliveryDay.date" x-text="deliveryDay.label" :selected="i === 0">
+								<template x-for="deliveryDay in deliveryDays">
+									<option :value="deliveryDay.date" x-text="deliveryDay.label">
 									</option>
 								</template>
 							</select>
 						</section>
-						<section class="grid gap-1" x-show="selectedDeliveryMethod == 'deliver'">
+						<section id="deliveryModule-deliveryoptions" class="grid gap-1" x-show="selectedDeliveryMethod == 'deliver'">
 							<span class="text-gray-700" x-text="titles.delivery_options"></span>
 							<template x-for="deliveryOption in deliveryOptions" :key="deliveryOption.identifier">
 								<label class="flex flex-row items-center" :for="$id('deliveryOptionOption')"
@@ -73,7 +96,7 @@
 								</label>
 							</template>
 						</section>
-						<section class="grid gap-1" x-show="selectedDeliveryMethod == 'collect'">
+						<section id="deliveryModule-collectoptions" class="grid gap-1" x-show="selectedDeliveryMethod == 'collect'">
 							<span class="text-gray-700" x-text="titles.collect_options"></span>
 							<div class="animate-pulse" x-show="isLoadingCollectOptions">
 								<div class="w-full h-8 bg-gray-300 rounded mb-2"></div>
@@ -110,7 +133,7 @@
 						</section>
 					</div>
 				</div>
-			</div>
+			</section>
 		</div>
 	</div>
 </body>

@@ -1,5 +1,8 @@
 export const titles = {
+    'title_address': 'Bezorgadres',
     'title': 'Bezorging',
+    'country': 'Land',
+    'zipcode': 'Postcode',
     'delivery_methods': 'Bezorgmethode',
     'delivery_days': 'Wanneer wil je het ontvangen?',
     'delivery_options': 'Bezorgoptie',
