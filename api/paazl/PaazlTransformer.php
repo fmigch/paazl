@@ -13,6 +13,7 @@ class PaazlTransformer
     public function getTransformedShippingOptions($data)
     {
         $collectedDeliveryDates = array();
+        $i = 0;
         foreach ($data->shippingOptions as $shippingOption) {
             foreach ($shippingOption->deliveryDates as $deliveryDate) {
                 $option = array(
@@ -44,6 +45,8 @@ class PaazlTransformer
                         'options' => array($option)
                     );
                 }
+
+                $i++;
             }
         }
 

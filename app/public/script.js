@@ -3,20 +3,21 @@ import { pickupLocationsUrl, shippingOptionsUrl, allowedCountries } from '.././c
 import paazlService from '.././src/services/paazlService.js'
 import { titles, words, deliveryMethods, defaultDeliveryOptions } from '.././locale/nl_NL.js'
 
-let deliveryDays, deliveryOptions, collectOptions = []
+let deliveryDays = []
+let collectOptions = []
+let deliveryOptions = []
 
 Alpine.data('app', () => ({
-	isLoading: true,
+	isLoadingDeliveryOptions: false,
 	isLoadingCollectOptions: false,
 	hasError: false,
 
 	titles: titles,
 
 	selectedZipcode: '7271CB',
-	isZipcodeValidated: true,
 	selectedCountry: allowedCountries[0].code,
 	countries: allowedCountries,
-	countryIsChanged: true,
+	addressValidated: false,
 
 	deliveryMethods: deliveryMethods,
 	deliveryDays: deliveryDays,
@@ -28,6 +29,11 @@ Alpine.data('app', () => ({
 
 	collectOptions: collectOptions,
 	selectedCollectOption: '',
+
+	showDeliveryMethods: true,
+	showDeliveryDays: false,
+	showDeliveryOptions: false,
+	showCollectOptions: false,
 
 	// default
 	shipmentParameters: {
@@ -49,63 +55,64 @@ Alpine.data('app', () => ({
 	},
 
 	async getShippingOptions() {
-		if (this.countryIsChanged) {
-			try {
-				const payload = {
-					consigneeCountryCode: this.selectedCountry,
-					consigneePostalCode: this.selectedZipcode,
-					shipmentParameters: this.shipmentParameters
-				}
+		try {
+			this.isLoadingDeliveryOptions = true
 
-				this.isLoading = true
-
-				const response = await paazlService(shippingOptionsUrl, payload)
-
-				this.deliveryDays = response
-				this.deliveryOptions = response[0].options
-				this.selectedDeliveryOption = response[0].options[0].identifier
-				this.isLoading = false
-			} catch {
-				this.isLoading = false
-				this.hasError = true
-
-				console.log('Could not connect to Paazl')
-
-				let tomorrow = new Date()
-				tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
-
-				this.deliveryDays = [
-					{
-						'label': words.tomorrow[0].toUpperCase() + words.tomorrow.slice(1).toLowerCase(),
-						'date': tomorrow.toISOString().substring(0, 10)
-					}
-				]
-
-				this.deliveryOptions = defaultDeliveryOptions,
-					this.selectedDeliveryDay = this.deliveryDays[0].date,
-					this.selectedDeliveryOption = defaultDeliveryOptions[0].identifier
-			}
-
-			this.countryIsChanged = false
-		}
-	},
-
-	async getPickupLocations() {
-		if (this.collectOptions.length == 0 || this.countryIsChanged) {
 			const payload = {
 				consigneeCountryCode: this.selectedCountry,
 				consigneePostalCode: this.selectedZipcode,
 				shipmentParameters: this.shipmentParameters
 			}
 
-			this.isLoadingCollectOptions = true
-			const response = await paazlService(pickupLocationsUrl, payload)
-			this.collectOptions = response
-			this.selectedCollectOption = response[0].code
-			this.isLoadingCollectOptions = false
+			const response = await paazlService(shippingOptionsUrl, payload)
+
+			console.log(response)
+
+			this.deliveryDays = response
+			this.selectedDeliveryDay = this.deliveryDays[0].date
+			this.deliveryOptions = response[0].options
+			this.selectedDeliveryOption = response[0].options[0].identifier
+
+			this.isLoadingDeliveryOptions = false
+			this.showDeliverSections()
+		} catch {
+			this.isLoadingDeliveryOptions = false
+			this.hasError = true
+
+			console.log('Could not connect to Paazl')
+
+			let tomorrow = new Date()
+			tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
+
+			this.deliveryDays = [
+				{
+					'label': words.tomorrow[0].toUpperCase() + words.tomorrow.slice(1).toLowerCase(),
+					'date': tomorrow.toISOString().substring(0, 10)
+				}
+			]
+
+			this.deliveryOptions = defaultDeliveryOptions
+			this.selectedDeliveryDay = this.deliveryDays[0].date
+			this.selectedDeliveryOption = defaultDeliveryOptions[0].identifier
+		}
+	},
+
+	async getPickupLocations() {
+		this.isLoadingCollectOptions = true
+
+		const payload = {
+			consigneeCountryCode: this.selectedCountry,
+			consigneePostalCode: this.selectedZipcode,
+			shipmentParameters: this.shipmentParameters
 		}
 
-		this.countryIsChanged = false
+		const response = await paazlService(pickupLocationsUrl, payload)
+
+		this.collectOptions = response
+		this.selectedCollectOption = response[0].code
+
+		this.isLoadingCollectOptions = false
+		this.showCollectSections()
 	},
 
 	updateDeliveryOptions(event) {
@@ -135,19 +142,70 @@ Alpine.data('app', () => ({
 		}
 	},
 
-	isChanged() {
-		this.countryIsChanged = true
-		this.refreshData()
+	changeAddress() {
+		if (this.selectedDeliveryMethod == 'collect') {
+			this.deliveryOptions = []
+		} else {
+			this.collectOptions = []
+		}
+
+		this.validateAddress()
 	},
 
-	refreshData() {
+	validateAddress() {
+		this.addressValidated = false
+
 		if (this.validateZipcode()) {
-			if(this.selectedDeliveryMethod == 'collect') {
+			this.addressValidated = true
+
+			if (this.selectedDeliveryMethod == 'collect') {
+				this.hideCollectSections()
 				this.getPickupLocations()
 			} else {
+				this.hideDeliverSections()
 				this.getShippingOptions()
-			}	
+			}
+		} else {
+			this.addressValidated = false
 		}
+	},
+
+	changeDeliveryMethod() {
+		if (this.selectedDeliveryMethod == 'collect') {
+			this.hideDeliverSections()
+
+			if (this.collectOptions.length == 0) {
+				this.validateAddress()
+			} else {
+				this.showCollectSections()
+			}
+		} else {
+			this.hideCollectSections()
+
+			if (this.deliveryOptions.length == 0) {
+				this.validateAddress()
+			} else {
+				this.showDeliverSections()
+			}
+		}
+	},
+
+	showDeliverSections() {
+		this.showDeliveryDays = true
+		this.showDeliveryOptions = true
+	},
+
+	hideDeliverSections() {
+		this.showDeliveryDays = false
+		this.showDeliveryOptions = false
+	},
+
+	showCollectSections() {
+		this.showCollectOptions = true
+	},
+
+	hideCollectSections() {
+		this.showCollectOptions = false
 	}
 }))
 
