@@ -7,7 +7,8 @@ class PaazlTransformer
     public function __construct($language = 'en_US')
     {
         $this->translate = [];
-        if ($language != 'en_US') $this->translate = require 'locale/' . $language . '.php';
+        if ($language != 'en_US')
+            $this->translate = require 'locale/' . $language . '.php';
     }
 
     public function getTransformedShippingOptions($data)
@@ -20,7 +21,7 @@ class PaazlTransformer
                     'identifier' => $shippingOption->identifier,
                     'label' => $shippingOption->name,
                     'carrier' => $this->translate[$shippingOption->carrier->name] ?? $shippingOption->carrier->name,
-                    'description' => $shippingOption->description,
+                    'description' => $shippingOption->description ?? null,
                     'rate' => array(
                         'price' => $shippingOption->rate,
                         'label' => '€ ' . str_replace('.', ',', $shippingOption->rate)
@@ -58,10 +59,11 @@ class PaazlTransformer
     public function getTransformedPickupLocations($data)
     {
         $collectedPickupLocations = array();
-        foreach ($data->pickupLocations as $pickupLocation) {
+
+        for ($i = 0; $i < 5; $i++) {
             $dates = array();
 
-            foreach ($pickupLocation->shippingOptions as $shippingOption) {
+            foreach ($data->pickupLocations[$i]->shippingOptions as $shippingOption) {
                 foreach ($shippingOption->deliveryDates as $deliveryDate) {
                     $dates[$deliveryDate->deliveryDate] = array(
                         'date' => $deliveryDate->deliveryDate,
@@ -78,12 +80,12 @@ class PaazlTransformer
             sort($dates);
 
             $collectedPickupLocations[] = array(
-                'code'          => $pickupLocation->code,
-                'label'         => $pickupLocation->name,
-                'description'   => ucfirst(str_replace('%d', $this->getTransformedDate($dates[0]['date']), ($this->translate['can_be_picked_up_from'] ?? 'can be picked up from %d'))),
-                'identifier'    => $dates[0]['identifier'],
-                'carrier'       => $this->translate[$dates[0]['carrier']] ?? $dates[0]['carrier'],
-                'rate'          => $dates[0]['rate']
+                'code' => $data->pickupLocations[$i]->code,
+                'label' => $data->pickupLocations[$i]->name,
+                'description' => ucfirst(str_replace('%d', $this->getTransformedDate($dates[0]['date']), ($this->translate['can_be_picked_up_from'] ?? 'can be picked up from %d'))),
+                'identifier' => $dates[0]['identifier'],
+                'carrier' => $this->translate[$dates[0]['carrier']] ?? $dates[0]['carrier'],
+                'rate' => $dates[0]['rate']
             );
         }
 

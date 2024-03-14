@@ -1,9 +1,15 @@
 export const titles = {
+    'title_address': 'Delivery address',
     'title': 'Delivery',
     'delivery_methods': 'Delivery method',
     'delivery_days': 'When do you want to receive it?',
     'delivery_options': 'Delivery option',
     'collect_options': 'Collect option'
+}
+
+export const countries = {
+    'NL': 'The Netherlands',
+    'BE': 'Belgium'
 }
 
 export const words = {

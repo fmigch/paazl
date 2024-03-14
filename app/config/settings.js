@@ -1,13 +1,11 @@
-export const shippingOptionsUrl = 'http://localhost:3000/paazl/api/shippingoptions.php'
-export const pickupLocationsUrl = 'http://localhost:3000/paazl/api/pickuplocations.php'
+// url of api server
+export const apiUrl = 'http://localhost:3000/paazl/api'
 
 export const allowedCountries = [
     {
-        code: 'NL',
-        label: 'Nederland'
+        code: 'NL'
     },
     {
-        code: 'BE',
-        label: 'België'
+        code: 'BE'
     }
 ]

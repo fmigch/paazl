@@ -22,7 +22,7 @@ $payload = json_decode(file_get_contents('php://input'));
 
 // load library for API request
 $paazlApi = new PaazlApi(
-	'TEST190220242',
+	$payload->reference,
 	$env['PAAZL_APIKEY'],
 	$env['PAAZL_APISECRET']
 );
@@ -38,7 +38,7 @@ if (!isset($payload->token))
 $settings = json_decode($settings);
 
 // change sort model for pickuplocations
-if ($endpoint == 'pickuplocations')
+if ($endpoint == 'pickuplocations') 
 	$settings->sortingModel->orderBy = 'DISTANCE';
 
 // merge payload and settings

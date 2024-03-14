@@ -1,6 +1,6 @@
 <?php
 
-$language = 'nl_NL';
+$language = 'nl_NL'; // en_US
 
 $today = new DateTime('today');
 

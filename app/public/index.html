@@ -5,6 +5,9 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link href="./style.css" rel="stylesheet">
+	<style>
+		[x-cloak] { display: none; }
+	</style>
 	<script src="./script.js" type="module" defer></script>
 </head>
 
@@ -34,7 +37,7 @@
 					</div>
 				</div>
 			</section>
-			<section id="deliveryModule" class="py-4">
+			<section id="deliveryModule" class="py-4" x-cloak>
 				<h2 class="text-2xl font-bold" x-text="titles.title"></h2>
 				<div class="mt-4 max-w-md">
 					<div class="grid grid-cols-1 gap-6">
@@ -44,7 +47,7 @@
 								x-init="$watch('selectedDeliveryMethod', value => changeDeliveryMethod())">
 								<div class="flex items-center" x-id="['deliveryMethodOption']">
 									<input type="radio" :id="$id('deliveryMethodOption')" :value="deliveryMethod.type"
-										name="inputDeliveryMethod" x-model="selectedDeliveryMethod" />
+										name="inputDeliveryMethod" x-model="selectedDeliveryMethod" x-bind:disabled="deliveryMethodsDisabled"/>
 									<label :for="$id('deliveryMethodOption')" class="pl-2"
 										x-text="deliveryMethod.label"></label>
 								</div>
@@ -68,6 +71,9 @@
 						<div class="max-w-md animate-pulse" x-show="isLoadingDeliveryOptions">
 							<div class="w-1/2 h-7 bg-gray-300 rounded mb-2"></div>
 							<div class="w-full h-8 bg-gray-300 rounded mb-2"></div>
+							<div class="w-full h-8 bg-gray-300 rounded mb-2"></div>
+							<div class="w-full h-8 bg-gray-300 rounded mb-2"></div>
+							<div class="w-full h-8 bg-gray-300 rounded mb-2"></div>
 						</div>
 						<section id="deliveryModule-deliveryoptions" class="grid gap-1" x-show="showDeliveryOptions">
 							<span class="text-gray-700" x-text="titles.delivery_options"></span>
@@ -80,8 +86,7 @@
 											x-model="selectedDeliveryOption" />
 										<div class="pl-2 align-middle inline-block w-4/5">
 											<span x-text="deliveryOption.label" class="inline-block w-full"></span>
-											<span x-text="deliveryOption.description" class="inline-block text-xs"
-												x-show="selectedDeliveryOption == deliveryOption.identifier"></span>
+											<span x-text="deliveryOption.description" class="inline-block text-xs" x-show="deliveryOption.description != null && selectedDeliveryOption == deliveryOption.identifier" :id="$id('deliveryOptionDescription')"></span>
 										</div>
 									</div>
 									<div class="basis-1/6">
@@ -90,14 +95,13 @@
 									<div class="basis-1/6">
 										<img :src="'images/'+ deliveryOption.carrier + '.svg'"
 											:title="deliveryOption.carrier" :alt="deliveryOption.carrier"
-											class="object-cover h-8 w-8 rounded">
+											class="object-cover h-8 w-8 rounded ml-auto">
 									</div>
 								</label>
 							</template>
 						</section>
 						<div class="animate-pulse" x-show="isLoadingCollectOptions">
 							<div class="w-1/2 h-8 bg-gray-300 rounded mb-2"></div>
-							<div class="w-full h-8 bg-gray-300 rounded mb-2"></div>
 							<div class="w-full h-8 bg-gray-300 rounded mb-2"></div>
 							<div class="w-full h-8 bg-gray-300 rounded mb-2"></div>
 							<div class="w-full h-8 bg-gray-300 rounded mb-2"></div>
@@ -125,7 +129,7 @@
 									<div class="basis-1/6">
 										<img :src="'images/'+ collectOption.carrier + '.svg'"
 											:title="collectOption.carrier" :alt="collectOption.carrier"
-											class="object-cover h-8 w-8 rounded">
+											class="object-cover h-8 w-8 rounded ml-auto">
 									</div>
 								</label>
 							</template>

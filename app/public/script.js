@@ -1,16 +1,23 @@
 import Alpine from '.././node_modules/alpinejs/dist/module.esm.js'
-import { pickupLocationsUrl, shippingOptionsUrl, allowedCountries } from '.././config/settings.js'
+import { apiUrl, allowedCountries } from '.././config/settings.js'
 import paazlService from '.././src/services/paazlService.js'
-import { titles, words, deliveryMethods, defaultDeliveryOptions } from '.././locale/nl_NL.js'
+import { titles, countries, words, deliveryMethods, defaultDeliveryOptions } from '.././locale/nl_NL.js' // en_US.js
 
 let deliveryDays = []
 let collectOptions = []
 let deliveryOptions = []
 
+function getTranslation(e, i) {
+	allowedCountries[i].label = countries[e.code]
+}
+
+allowedCountries.forEach(getTranslation)
+
 Alpine.data('app', () => ({
+	reference: 'TEST190220243',
+
 	isLoadingDeliveryOptions: false,
 	isLoadingCollectOptions: false,
-	hasError: false,
 
 	titles: titles,
 
@@ -24,6 +31,7 @@ Alpine.data('app', () => ({
 	deliveryOptions: deliveryOptions,
 
 	selectedDeliveryMethod: deliveryMethods[0].type,
+	deliveryMethodsDisabled: true,
 	selectedDeliveryDay: '',
 	selectedDeliveryOption: '',
 
@@ -56,15 +64,17 @@ Alpine.data('app', () => ({
 
 	async getShippingOptions() {
 		try {
+			this.deliveryMethodsDisabled = true
 			this.isLoadingDeliveryOptions = true
 
 			const payload = {
 				consigneeCountryCode: this.selectedCountry,
 				consigneePostalCode: this.selectedZipcode,
-				shipmentParameters: this.shipmentParameters
+				shipmentParameters: this.shipmentParameters,
+				reference: this.reference
 			}
 
-			const response = await paazlService(shippingOptionsUrl, payload)
+			const response = await paazlService(apiUrl + '/shippingoptions.php', payload)
 
 			this.deliveryDays = response
 			this.selectedDeliveryDay = this.deliveryDays[0].date
@@ -72,45 +82,36 @@ Alpine.data('app', () => ({
 			this.selectedDeliveryOption = response[0].options[0].identifier
 
 			this.isLoadingDeliveryOptions = false
+			this.deliveryMethodsDisabled = false
 			this.showDeliverSections()
 		} catch {
-			this.isLoadingDeliveryOptions = false
-			this.hasError = true
-
-			console.log('Could not connect to Paazl')
-
-			let tomorrow = new Date()
-			tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
-
-			this.deliveryDays = [
-				{
-					'label': words.tomorrow[0].toUpperCase() + words.tomorrow.slice(1).toLowerCase(),
-					'date': tomorrow.toISOString().substring(0, 10)
-				}
-			]
-
-			this.deliveryOptions = defaultDeliveryOptions
-			this.selectedDeliveryDay = this.deliveryDays[0].date
-			this.selectedDeliveryOption = defaultDeliveryOptions[0].identifier
+			this.isError()
 		}
 	},
 
 	async getPickupLocations() {
-		this.isLoadingCollectOptions = true
+		try {
+			this.deliveryMethodsDisabled = true
+			this.isLoadingCollectOptions = true
 
-		const payload = {
-			consigneeCountryCode: this.selectedCountry,
-			consigneePostalCode: this.selectedZipcode,
-			shipmentParameters: this.shipmentParameters
+			const payload = {
+				consigneeCountryCode: this.selectedCountry,
+				consigneePostalCode: this.selectedZipcode,
+				shipmentParameters: this.shipmentParameters,
+				reference: this.reference
+			}
+
+			const response = await paazlService(apiUrl + '/pickuplocations.php', payload)
+
+			this.collectOptions = response
+			this.selectedCollectOption = response[0].code
+
+			this.isLoadingCollectOptions = false
+			this.deliveryMethodsDisabled = false
+			this.showCollectSections()
+		} catch {
+			this.isError()
 		}
-
-		const response = await paazlService(pickupLocationsUrl, payload)
-
-		this.collectOptions = response
-		this.selectedCollectOption = response[0].code
-
-		this.isLoadingCollectOptions = false
-		this.showCollectSections()
 	},
 
 	updateDeliveryOptions(event) {
@@ -204,7 +205,31 @@ Alpine.data('app', () => ({
 
 	hideCollectSections() {
 		this.showCollectOptions = false
+	},
+
+	isError() {
+		console.log('Could not connect to Paazl')
+
+		let tomorrow = new Date()
+		tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
+
+		this.deliveryDays = [
+			{
+				'label': words.tomorrow[0].toUpperCase() + words.tomorrow.slice(1).toLowerCase(),
+				'date': tomorrow.toISOString().substring(0, 10)
+			}
+		]
+
+		this.showDeliveryMethods = false
+		this.deliveryMethodsDisabled = true
+		this.deliveryOptions = defaultDeliveryOptions
+		this.selectedDeliveryDay = this.deliveryDays[0].date
+		this.selectedDeliveryOption = defaultDeliveryOptions[0].identifier
+
+		this.isLoadingDeliveryOptions = false
+		this.showDeliverSections()
 	}
+
 }))
 
 Alpine.start()
