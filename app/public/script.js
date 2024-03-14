@@ -66,8 +66,6 @@ Alpine.data('app', () => ({
 
 			const response = await paazlService(shippingOptionsUrl, payload)
 
-			console.log(response)
-
 			this.deliveryDays = response
 			this.selectedDeliveryDay = this.deliveryDays[0].date
 			this.deliveryOptions = response[0].options
