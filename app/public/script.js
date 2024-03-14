@@ -1,17 +1,11 @@
 import Alpine from '.././node_modules/alpinejs/dist/module.esm.js'
-import { apiUrl, allowedCountries } from '.././config/settings.js'
+import { apiUrl } from '.././config/settings.js'
 import paazlService from '.././src/services/paazlService.js'
-import { titles, countries, words, deliveryMethods, defaultDeliveryOptions } from '.././locale/nl_NL.js' // en_US.js
+import { titles, allowedCountries, words, deliveryMethods, defaultDeliveryOptions } from '.././locale/nl_NL.js' // en_US.js
 
 let deliveryDays = []
 let collectOptions = []
 let deliveryOptions = []
-
-function getTranslation(e, i) {
-	allowedCountries[i].label = countries[e.code]
-}
-
-allowedCountries.forEach(getTranslation)
 
 Alpine.data('app', () => ({
 	reference: 'TEST190220243',
@@ -21,7 +15,7 @@ Alpine.data('app', () => ({
 
 	titles: titles,
 
-	selectedZipcode: '7271CB',
+	selectedZipcode: '1011AB',
 	selectedCountry: allowedCountries[0].code,
 	countries: allowedCountries,
 	addressValidated: false,

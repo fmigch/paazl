@@ -9,10 +9,16 @@ export const titles = {
     'collect_options': 'Ophaalpunt'
 }
 
-export const countries = {
-    'NL': 'Nederland',
-    'BE': 'België'
-}
+export const allowedCountries = [
+    {
+        code: 'NL',
+        label: 'Nederland'
+    },
+    {
+        code: 'BE',
+        label: 'België'
+    }
+]
 
 export const words = {
     'tomorrow': 'morgen'

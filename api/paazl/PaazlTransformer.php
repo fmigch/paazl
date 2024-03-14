@@ -2,13 +2,20 @@
 
 class PaazlTransformer
 {
+    public $transformCarrier;
+    public $transformDate;
     public $translate;
+    public $language;
 
     public function __construct($language = 'en_US')
     {
+        $this->transformCarrier = require 'config/transformCarrier.php';
+        $this->transformDate = require 'config/transformDate.php';
+
+        $this->language = $language;
         $this->translate = [];
-        if ($language != 'en_US')
-            $this->translate = require 'locale/' . $language . '.php';
+        if ($this->language != 'en_US')
+            $this->translate = require 'locale/' . $this->language . '.php';
     }
 
     public function getTransformedShippingOptions($data)
@@ -20,13 +27,18 @@ class PaazlTransformer
                 $option = array(
                     'identifier' => $shippingOption->identifier,
                     'label' => $shippingOption->name,
-                    'carrier' => $this->translate[$shippingOption->carrier->name] ?? $shippingOption->carrier->name,
+                    'carrier' => $this->transformCarrier[$shippingOption->carrier->name] ?? $shippingOption->carrier->name,
                     'description' => $shippingOption->description ?? null,
                     'rate' => array(
                         'price' => $shippingOption->rate,
                         'label' => '€ ' . str_replace('.', ',', $shippingOption->rate)
                     )
                 );
+
+                $days = $this->transformDate[$shippingOption->identifier];
+                if($days) {
+                    $deliveryDate->deliveryDate = date('Y-m-d', strtotime($days, strtotime($deliveryDate->deliveryDate)));
+                }
 
                 if (isset($collectedDeliveryDates[$deliveryDate->deliveryDate])) {
                     if (!in_array($shippingOption->identifier, $collectedDeliveryDates[$deliveryDate->deliveryDate]['options'])) {
@@ -68,7 +80,7 @@ class PaazlTransformer
                     $dates[$deliveryDate->deliveryDate] = array(
                         'date' => $deliveryDate->deliveryDate,
                         'identifier' => $shippingOption->identifier,
-                        'carrier' => $shippingOption->carrier->name,
+                        'carrier' => $this->transformCarrier[$shippingOption->carrier->name] ?? $shippingOption->carrier->name,
                         'rate' => array(
                             'price' => $shippingOption->rate,
                             'label' => '€ ' . str_replace('.', ',', $shippingOption->rate)
@@ -106,7 +118,11 @@ class PaazlTransformer
             case +1:
                 return $this->translate['tomorrow'] ?? 'tomorrow';
             default:
-                return ($this->translate[$date->format('l')] ?? $date->format('l')) . ' ' . $date->format('j') . ' ' . ($this->translate[$date->format('F')] ?? $date->format('F'));
+                if($this->language == 'en_US') {
+                    return ($this->translate[$date->format('l')] ?? $date->format('l')) . ', ' . ($this->translate[$date->format('F')] ?? $date->format('F') . ' ' . $date->format('j') );
+                } else {
+                    return ($this->translate[$date->format('l')] ?? $date->format('l')) . ' ' . $date->format('j') . ' ' . ($this->translate[$date->format('F')] ?? $date->format('F'));
+                }
         }
     }
 }

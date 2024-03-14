@@ -18,7 +18,5 @@ return [
     'June' => 'juli',
     'July' => 'juli',
     'August' => 'augustus',
-    'October' => 'oktober',
-    'SELEKTVRACHT' => 'DHL',
-    'DHL_EXPRESS' => 'DHL'
+    'October' => 'oktober'
 ];

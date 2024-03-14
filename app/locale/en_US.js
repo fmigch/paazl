@@ -1,16 +1,24 @@
 export const titles = {
     'title_address': 'Delivery address',
-    'title': 'Delivery',
+    'title': 'Delivery options',
+    'country': 'Country',
+    'zipcode': 'Zipcode',
     'delivery_methods': 'Delivery method',
     'delivery_days': 'When do you want to receive it?',
-    'delivery_options': 'Delivery option',
-    'collect_options': 'Collect option'
+    'delivery_options': 'Delivery service',
+    'collect_options': 'Servicepoint'
 }
 
-export const countries = {
-    'NL': 'The Netherlands',
-    'BE': 'Belgium'
-}
+export const allowedCountries = [
+    {
+        code: 'NL',
+        label: 'The Netherlands'
+    },
+    {
+        code: 'BE',
+        label: 'Belgium'
+    }
+]
 
 export const words = {
     'tomorrow': 'Tomorrow'
